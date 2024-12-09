@@ -10,7 +10,7 @@ class MockGuestDataSourceTest {
     @Test
     fun `should provide a collection of guests`() {
         // When
-        val guests = mockGuestDataSource.getGuests()
+        val guests = mockGuestDataSource.retrieveGuests()
         // Then
         Assertions.assertThat(guests).isNotEmpty
     }
@@ -18,7 +18,7 @@ class MockGuestDataSourceTest {
     @Test
     fun `should provide mock data`() {
         // When
-        val guests = mockGuestDataSource.getGuests()
+        val guests = mockGuestDataSource.retrieveGuests()
         // Then
         Assertions.assertThat(guests).allMatch { guest ->
             guest.name.isNotBlank()
