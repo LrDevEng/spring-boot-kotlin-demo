@@ -1,6 +1,7 @@
 package com.example.demo.controller
 
 import com.example.demo.model.Guest
+import com.example.demo.model.UpdateGuestRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 
 @SpringBootTest
@@ -23,6 +25,7 @@ internal class GuestControllerTest {
     @Autowired
     lateinit var objectMapper: ObjectMapper
 
+    // --- Get request tests ---
     @Test
     fun `should return all guests`() {
         // When/Then
@@ -64,6 +67,7 @@ internal class GuestControllerTest {
             }
     }
 
+    // --- Post request tests ---
     @Test
     fun `should add new guest`() {
         // Given
@@ -102,6 +106,49 @@ internal class GuestControllerTest {
             .andDo { print() }
             .andExpect {
                 status { isBadRequest() }
+            }
+    }
+
+    // --- Patch request tests ---
+    @Test
+    fun `should update existing guest`() {
+        // Given
+        val updateGuestRequest = UpdateGuestRequest(null, null, participation = false);
+
+        // When
+        val patchResponse = mockMvc.patch("$baseUrl/0") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateGuestRequest)
+        }
+
+        // Then
+        patchResponse
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                jsonPath("$.name"){value("John")}
+                jsonPath("$.surname"){value("Doe")}
+                jsonPath("$.participation"){value(false)}
+            }
+    }
+
+    @Test
+    fun `should return NOT FOUND if guest with given id does not exist for update`() {
+        // Given
+        val updateGuestRequest = UpdateGuestRequest(null, null, participation = false);
+
+        // When
+        val patchResponse = mockMvc.patch("$baseUrl/99") {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateGuestRequest)
+        }
+
+        // Then
+        patchResponse
+            .andDo { print() }
+            .andExpect {
+                status { isNotFound() }
             }
     }
 }

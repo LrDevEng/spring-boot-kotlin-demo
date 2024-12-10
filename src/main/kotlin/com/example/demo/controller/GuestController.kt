@@ -1,11 +1,13 @@
 package com.example.demo.controller
 
 import com.example.demo.model.Guest
+import com.example.demo.model.UpdateGuestRequest
 import com.example.demo.service.GuestService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -33,4 +35,8 @@ class GuestController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun addGuest(@RequestBody guest: Guest): Guest = service.addGuest(guest)
+
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun updateGuest(@PathVariable id: Int, @RequestBody updateGuestRequest: UpdateGuestRequest): Guest = service.updateGuest(id, updateGuestRequest)
 }

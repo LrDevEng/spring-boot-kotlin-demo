@@ -2,6 +2,7 @@ package com.example.demo.datasource.mock
 
 import com.example.demo.datasource.GuestDataSource
 import com.example.demo.model.Guest
+import com.example.demo.model.UpdateGuestRequest
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -22,5 +23,24 @@ class MockGuestDataSource: GuestDataSource {
         }
         guests.add(guest)
         return guest
+    }
+
+    override fun updateGuest(
+        id: Int,
+        request: UpdateGuestRequest
+    ): Guest {
+        val guestIdx = guests.indexOfFirst { it.id == id }
+        if (guestIdx == -1) {
+            throw NoSuchElementException("Could not find guest with id $id")
+        } else {
+            guests[guestIdx] = Guest(
+                id = id,
+                name = request.name ?: guests[guestIdx].name,
+                surname = request.surname ?: guests[guestIdx].surname,
+                participation = request.participation ?: guests[guestIdx].participation
+            )
+            return guests[guestIdx]
+
+        }
     }
 }
