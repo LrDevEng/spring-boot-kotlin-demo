@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.web.servlet.MockMvc
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
@@ -146,6 +147,36 @@ internal class GuestControllerTest {
 
         // Then
         patchResponse
+            .andDo { print() }
+            .andExpect {
+                status { isNotFound() }
+            }
+    }
+
+    // --- Delete request tests ---
+    @Test
+    fun `should delete existing guest`() {
+        // When
+        val deleteResponse = mockMvc.delete("$baseUrl/5")
+
+        // Then
+        deleteResponse
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                jsonPath("$.name"){value("Sherlock")}
+                jsonPath("$.surname"){value("Holmes")}
+            }
+    }
+
+    @Test
+    fun `should return NOT FOUND if guest with given id does not exist for delete`() {
+        // When
+        val deleteResponse = mockMvc.delete("$baseUrl/99")
+
+        // Then
+        deleteResponse
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }

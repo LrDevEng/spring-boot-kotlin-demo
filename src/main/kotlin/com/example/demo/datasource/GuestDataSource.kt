@@ -8,4 +8,5 @@ interface GuestDataSource {
     fun retrieveGuest(id: Int): Guest
     fun createGuest(guest: Guest): Guest
     fun updateGuest(id: Int, request: UpdateGuestRequest): Guest
+    fun deleteGuest(id: Int): Guest
 }

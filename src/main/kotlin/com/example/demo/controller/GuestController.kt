@@ -5,6 +5,7 @@ import com.example.demo.model.UpdateGuestRequest
 import com.example.demo.service.GuestService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -39,4 +40,8 @@ class GuestController(
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun updateGuest(@PathVariable id: Int, @RequestBody updateGuestRequest: UpdateGuestRequest): Guest = service.updateGuest(id, updateGuestRequest)
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteGuest(@PathVariable id: Int): Guest = service.deleteGuest(id)
 }

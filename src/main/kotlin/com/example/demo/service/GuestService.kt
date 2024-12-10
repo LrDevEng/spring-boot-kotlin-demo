@@ -11,4 +11,5 @@ class GuestService (private val dataSource: GuestDataSource) {
     fun getGuest(id: Int): Guest = dataSource.retrieveGuest(id)
     fun addGuest(guest: Guest): Guest = dataSource.createGuest(guest)
     fun updateGuest(id: Int, request: UpdateGuestRequest) = dataSource.updateGuest(id, request)
+    fun deleteGuest(id: Int): Guest = dataSource.deleteGuest(id)
 }

@@ -43,4 +43,15 @@ class MockGuestDataSource: GuestDataSource {
 
         }
     }
+
+    override fun deleteGuest(id: Int): Guest {
+        val guestIdx = guests.indexOfFirst { it.id == id }
+        if (guestIdx == -1) {
+            throw NoSuchElementException("Could not find guest with id $id")
+        } else {
+            val guest = guests[guestIdx]
+            guests.removeAt(guestIdx)
+            return guest
+        }
+    }
 }
