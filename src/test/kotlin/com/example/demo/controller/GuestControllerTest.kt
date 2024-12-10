@@ -1,5 +1,7 @@
 package com.example.demo.controller
 
+import com.example.demo.model.Guest
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -8,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -16,6 +19,9 @@ internal class GuestControllerTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var objectMapper: ObjectMapper
 
     @Test
     fun `should return all guests`() {
@@ -55,6 +61,47 @@ internal class GuestControllerTest {
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
+            }
+    }
+
+    @Test
+    fun `should add new guest`() {
+        // Given
+        val newGuest = Guest(5, "Sherlock", "Holmes", true)
+
+        // When
+        val postResponse = mockMvc.post(baseUrl) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(newGuest)
+        }
+
+        // Then
+        postResponse
+            .andDo { print() }
+            .andExpect {
+                status { isCreated() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                jsonPath("$.name"){value("Sherlock")}
+                jsonPath("$.surname"){value("Holmes")}
+            }
+    }
+
+    @Test
+    fun `should return BAD REQUEST if guest with given id already exists`() {
+        // Given
+        val newGuest = Guest(0, "Sherlock", "Holmes", true)
+
+        // When
+        val postResponse = mockMvc.post(baseUrl) {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(newGuest)
+        }
+
+        // Then
+        postResponse
+            .andDo { print() }
+            .andExpect {
+                status { isBadRequest() }
             }
     }
 }
