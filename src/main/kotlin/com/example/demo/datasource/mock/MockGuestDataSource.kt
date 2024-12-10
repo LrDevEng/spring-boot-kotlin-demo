@@ -15,4 +15,5 @@ class MockGuestDataSource: GuestDataSource {
     )
 
     override fun retrieveGuests(): Collection<Guest> = guests
+    override fun retrieveGuest(id: Int): Guest = guests.firstOrNull() { it.id == id } ?: throw NoSuchElementException("Could not find guest with id $id")
 }
